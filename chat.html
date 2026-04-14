@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sharma Academy Chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --accent: #ff6d00;
+      --bg: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --card: #f8fafc;
+      --shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(145deg, #ffffff, #f7faff);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .chat-app {
+      width: min(980px, 100%);
+      height: min(92vh, 820px);
+      background: var(--bg);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      border: 1px solid #eef2f7;
+    }
+
+    .chat-header {
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #edf2f7;
+      background: #fff;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .brand-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-logo .logo-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.95rem;
+      display: inline-grid;
+      place-items: center;
+      box-shadow: 0 8px 16px rgba(26, 115, 232, 0.28);
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f9d58;
+      font-size: 0.9rem;
+      font-weight: 500;
+      background: #f0fff5;
+      border: 1px solid #d9f7e6;
+      border-radius: 999px;
+      padding: 8px 12px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.15);
+    }
+
+    .chat-body {
+      padding: 18px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      background:
+        radial-gradient(circle at 100% 0%, #f3f8ff 0%, transparent 42%),
+        radial-gradient(circle at 0% 100%, #fff7ef 0%, transparent 35%),
+        #ffffff;
+    }
+
+    .messages {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .msg-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      max-width: 90%;
+    }
+
+    .msg-row.user {
+      margin-left: auto;
+      justify-content: flex-end;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 8px 18px rgba(255, 109, 0, 0.3);
+    }
+
+    .bubble-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .bubble {
+      padding: 11px 14px;
+      border-radius: 16px;
+      line-height: 1.5;
+      font-size: 0.94rem;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    .user .bubble {
+      background: var(--primary);
+      color: #fff;
+      border-bottom-right-radius: 6px;
+      box-shadow: 0 10px 24px rgba(26, 115, 232, 0.26);
+    }
+
+    .bot .bubble {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid #eef2f7;
+      border-bottom-left-radius: 6px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+
+    .meta {
+      font-size: 0.74rem;
+      color: #94a3b8;
+      padding: 0 4px;
+    }
+
+    .user .meta {
+      text-align: right;
+    }
+
+    .welcome-actions {
+      margin-top: 8px;
+      margin-left: 40px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .suggestion {
+      border: 1px solid #d9e7ff;
+      background: #f4f8ff;
+      color: #1b4f9c;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .suggestion:hover {
+      background: #e9f1ff;
+      transform: translateY(-1px);
+    }
+
+    .typing .bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      min-width: 56px;
+    }
+
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #94a3b8;
+      animation: bounce 1.3s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+      40% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    .chat-input {
+      border-top: 1px solid #edf2f7;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .input-wrap {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      background: #f8fafc;
+      border: 1px solid #e8eef6;
+      border-radius: 14px;
+      padding: 8px;
+    }
+
+    .input-wrap input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 0.95rem;
+      font-family: inherit;
+      padding: 10px 10px;
+      color: var(--text);
+    }
+
+    .input-wrap input::placeholder {
+      color: #9aa6b2;
+    }
+
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), #3b82f6);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 18px rgba(26, 115, 232, 0.3);
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .send-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 0;
+        background: #fff;
+      }
+
+      .chat-app {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        border: none;
+      }
+
+      .chat-header {
+        padding: 14px 14px;
+      }
+
+      .brand-logo {
+        font-size: 1rem;
+      }
+
+      .tagline {
+        font-size: 0.78rem;
+      }
+
+      .status {
+        font-size: 0.76rem;
+        padding: 6px 9px;
+      }
+
+      .messages {
+        gap: 10px;
+      }
+
+      .msg-row {
+        max-width: 96%;
+      }
+
+      .welcome-actions {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-app">
+    <header class="chat-header">
+      <div class="brand">
+        <div class="brand-logo">
+          <span class="logo-badge">S</span>
+          Sharma Academy
+        </div>
+        <div class="tagline">Ask me anything about our courses</div>
+      </div>
+      <div class="status">
+        <span class="status-dot"></span>
+        Online
+      </div>
+    </header>
+
+    <main class="chat-body" id="chatBody">
+      <div class="messages" id="messages"></div>
+    </main>
+
+    <footer class="chat-input">
+      <form class="input-wrap" id="chatForm">
+        <input
+          id="messageInput"
+          type="text"
+          placeholder="Type your question here..."
+          autocomplete="off"
+          required
+        />
+        <button class="send-btn" id="sendBtn" type="submit" aria-label="Send message">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 11.5L20.5 4.5L13.5 22L11 13L3 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
+    </footer>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:3000/chat";
+    const messagesEl = document.getElementById("messages");
+    const chatBodyEl = document.getElementById("chatBody");
+    const chatForm = document.getElementById("chatForm");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    function getTime() {
+      return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function smoothToBottom() {
+      chatBodyEl.scrollTo({
+        top: chatBodyEl.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+
+    function createMessage(role, text, options = {}) {
+      const row = document.createElement("div");
+      row.className = `msg-row ${role}`;
+
+      if (role === "bot") {
+        const avatar = document.createElement("div");
+        avatar.className = "avatar";
+        avatar.textContent = "S";
+        row.appendChild(avatar);
+      }
+
+      const wrap = document.createElement("div");
+      wrap.className = "bubble-wrap";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+      wrap.appendChild(bubble);
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = options.time || getTime();
+      wrap.appendChild(meta);
+
+      row.appendChild(wrap);
+      messagesEl.appendChild(row);
+      smoothToBottom();
+      return row;
+    }
+
+    function createTyping() {
+      const row = document.createElement("div");
+      row.className = "msg-row bot typing";
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.textContent = "S";
+      row.appendChild(avatar);
+
+      const wrap = document.createElement("div");
+      wrap.className = "bubble-wrap";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.innerHTML = `
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+      `;
+      wrap.appendChild(bubble);
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = "Thinking...";
+      wrap.appendChild(meta);
+
+      row.appendChild(wrap);
+      messagesEl.appendChild(row);
+      smoothToBottom();
+      return row;
+    }
+
+    function createWelcome() {
+      createMessage(
+        "bot",
+        "Welcome to Sharma Academy! I can help with courses, fees, timings, and admission details."
+      );
+
+      const actions = document.createElement("div");
+      actions.className = "welcome-actions";
+
+      const questions = [
+        "What courses do you offer?",
+        "What are the fees?",
+        "What are the timings?",
+        "How to take admission?",
+      ];
+
+      questions.forEach((question) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "suggestion";
+        btn.textContent = question;
+        btn.addEventListener("click", () => {
+          sendMessage(question);
+        });
+        actions.appendChild(btn);
+      });
+
+      messagesEl.appendChild(actions);
+      smoothToBottom();
+    }
+
+    async function sendMessage(text) {
+      const userMessage = text.trim();
+      if (!userMessage) return;
+
+      createMessage("user", userMessage);
+      messageInput.value = "";
+      messageInput.focus();
+
+      sendBtn.disabled = true;
+      messageInput.disabled = true;
+      const typingRow = createTyping();
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: userMessage, question: userMessage })
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        typingRow.remove();
+        createMessage("bot", data.response || "I could not find a response.");
+      } catch (error) {
+        typingRow.remove();
+        createMessage("bot", "Sorry, I could not connect to the server. Please try again.");
+      } finally {
+        sendBtn.disabled = false;
+        messageInput.disabled = false;
+        messageInput.focus();
+      }
+    }
+
+    chatForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await sendMessage(messageInput.value);
+    });
+
+    messageInput.addEventListener("keydown", async (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        await sendMessage(messageInput.value);
+      }
+    });
+
+    createWelcome();
+  </script>
+</body>
+</html>
