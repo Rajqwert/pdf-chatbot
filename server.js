@@ -85,6 +85,7 @@ STRICT RULES:
 
 // Debug endpoint - browser mein /debug kholo to check DB
 app.get('/debug', async (req, res) => {
+  res.sendFile(__dirname + '/chat.html');
   const { data, error } = await supabase.from('documents').select('id, content').limit(5);
   res.json({ count: data?.length, sample: data, error });
 });
