@@ -34,7 +34,7 @@ async function getQueryEmbedding(text) {
 async function searchChunks(embedding) {
   const { data, error } = await supabase.rpc('match_documents', {
     query_embedding: embedding,
-    match_threshold: 0.1, // lowered from 0.3
+    match_threshold: 0.1,
     match_count: 5
   });
 
@@ -83,9 +83,13 @@ STRICT RULES:
   return data.choices[0].message.content;
 }
 
-// Debug endpoint - browser mein /debug kholo to check DB
-app.get('/debug', async (req, res) => {
+// ✅ Root route - chat.html serve karega
+app.get('/', (req, res) => {
   res.sendFile(__dirname + '/chat.html');
+});
+
+// ✅ Debug endpoint - DB check karne ke liye
+app.get('/debug', async (req, res) => {
   const { data, error } = await supabase.from('documents').select('id, content').limit(5);
   res.json({ count: data?.length, sample: data, error });
 });
